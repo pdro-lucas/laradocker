@@ -16,7 +16,7 @@ git clone https://github.com/pdro-lucas/laradocker.git && cd laradocker
 Now, build the Docker containers and set up the environment:
 
 ```bash
-make
+make setup
 ```
 
 For detailed steps, refer to the Makefile for automating the setup process.
