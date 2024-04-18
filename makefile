@@ -11,14 +11,14 @@ set_permissions:
 	sudo chmod -R 777 src/
 
 init_git:
-	@echo "\nDo you want to initialize a new Git repository? (Y/n)"
-	@read answer; \
-	if [ "$$answer" != "${answer#[Yy]}" ]; then \
-		rm -rf .git/; \
+	@echo "Do you want to initialize a new Git repository? (Y/n)"
+	@read -r answer; \
+	if [[ $$answer =~ ^[Yy]$$ ]]; then \
+		rm -rf .git; \
 		git init; \
 		echo "Git repository initialized"; \
 	else \
-		echo "Skipping initialization of Git repository"; \
+		echo "Skipping Git initialization"; \
 	fi
 
 finish:
