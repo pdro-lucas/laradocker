@@ -1,8 +1,5 @@
 version: '3'
 
-networks:
-  laravel:
-
 services:
   app:
     build:
@@ -19,9 +16,9 @@ services:
       - php
       - redis
       - mysql
-      - mailhog
+      - phpmyadmin
     networks:
-      - laravel
+      - php
 
   mysql:
     image: mariadb:10.5
@@ -30,16 +27,26 @@ services:
     ports:
       - '3306:3306'
     environment:
-      - MYSQL_DATABASE=laravel
-      - MYSQL_USER=laravel
+      - MYSQL_DATABASE=php-db
+      - MYSQL_USER=php
       - MYSQL_PASSWORD=secret
       - MYSQL_ROOT_PASSWORD=secret
       - SERVICE_TAGS=dev
       - SERVICE_NAME=mysql
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./db:/var/lib/mysql
     networks:
-      - laravel
+      - php
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    ports:
+      - '8080:80'
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      - php
 
   php:
     build:
@@ -53,7 +60,7 @@ services:
     volumes:
       - ./src:/var/www/html:delegated
     networks:
-      - laravel
+      - php
 
   redis:
     image: redis:alpine
@@ -61,7 +68,7 @@ services:
     ports:
       - '6379:6379'
     networks:
-      - laravel
+      - php
 
   composer:
     build:
@@ -76,40 +83,7 @@ services:
       - php
     entrypoint: ['composer', '--ignore-platform-reqs']
     networks:
-      - laravel
+      - php
 
-  npm:
-    image: node:current-alpine
-    volumes:
-      - ./src:/var/www/html
-    ports:
-      - '3000:3000'
-      - '3001:3001'
-      - '5173:5173'
-    working_dir: /var/www/html
-    entrypoint: ['npm']
-    networks:
-      - laravel
-
-  artisan:
-    build:
-      context: ./docker
-      dockerfile: php.dockerfile
-      args:
-        - UID=${UID:-1000}
-        - GID=${GID:-1000}
-    volumes:
-      - ./src:/var/www/html:delegated
-    depends_on:
-      - mysql
-    entrypoint: ['php', '/var/www/html/artisan']
-    networks:
-      - laravel
-
-  mailhog:
-    image: mailhog/mailhog:latest
-    ports:
-      - '1025:1025'
-      - '8025:8025'
-    networks:
-      - laravel
+networks:
+  php:
