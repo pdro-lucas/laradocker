@@ -1,33 +1,25 @@
-.PHONY: setup build-laravel install-npm-packages modify-vite-config
+.PHONY: setup build set_permissions init_git
 
-setup: build-laravel install-npm-packages modify-vite-config
-	@echo ""
-	@echo "*********************"
-	@echo "*                   *"
-	@echo "*    Laradocker     *"
-	@echo "*                   *"
-	@echo "*********************"
-	@echo ""
-	@echo "Setup completed successfully!"
-	@echo "To start the development server, run:"
-	@echo "docker-compose run --rm --service-ports npm run dev"
-	@echo "Then access the application at:"
-	@echo "http://localhost:5173"
+setup: build set_permissions init_git finish
 
-build-laravel:
-	@echo "Building Docker containers and setting permissions for src directory"
+build:
+	@echo "Building docker containers"
 	docker-compose up -d --build app
+
+set_permissions:
+	@echo "Setting permissions for src directory! This step requires sudo to run properly"
 	sudo chmod -R 777 src/
-	@echo "Installing Laravel..."
-	cd src
-	docker-compose run --rm composer create-project laravel/laravel .
-	@echo "Initializing new git repository"
-	rm -rf .git/
 
-install-npm-packages:
-	@echo "Installing npm packages"
-	docker-compose run --rm npm install
+init_git:
+	@echo "\nDo you want to initialize a new Git repository? (Y/n)"
+	@read answer; \
+	if [ "$$answer" != "${answer#[Yy]}" ]; then \
+		rm -rf .git/; \
+		git init; \
+		echo "Git repository initialized"; \
+	else \
+		echo "Skipping initialization of Git repository"; \
+	fi
 
-modify-vite-config:
-	@echo "Modifying dev script in package.json"
-	sed -i 's/"dev": "vite"/"dev": "vite --host 0.0.0.0"/' src/package.json
+finish:
+	@echo "Finished setting up project"
