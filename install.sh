@@ -24,95 +24,94 @@ print_message() {
 }
 
 check_dependencies() {
-  print_message "header" "Verificando dependências"
+  print_message "header" "Checking dependencies"
 
   if ! command -v docker &> /dev/null; then
-    print_message "error" "Docker não está instalado. Por favor, instale o Docker primeiro."
+    print_message "error" "Docker is not installed. Please install Docker first."
     exit 1
   fi
 
   if ! command -v docker-compose &> /dev/null; then
-    print_message "error" "Docker Compose não está instalado. Por favor, instale o Docker Compose primeiro."
+    print_message "error" "Docker Compose is not installed. Please install Docker Compose first."
     exit 1
   fi
 
-  print_message "success" "Todas as dependências estão instaladas"
+  print_message "success" "All dependencies are installed."
 }
 
 setup_directories() {
-  print_message "header" "Configurando diretórios"
+  print_message "header" "Setting up directories"
 
   mkdir -p src
 
   export UID=$(id -u)
   export GID=$(id -g)
 
-  print_message "success" "Diretórios configurados"
+  print_message "success" "Directories configured."
 }
 
 start_containers() {
-  print_message "header" "Iniciando containers Docker"
+  print_message "header" "Starting Docker containers"
 
   docker-compose up -d
 
-  print_message "success" "Containers iniciados"
+  print_message "success" "Containers started."
 }
 
 install_laravel() {
-  print_message "header" "Instalando Laravel"
+  print_message "header" "Installing Laravel"
 
   docker-compose run --rm composer create-project laravel/laravel .
 
-  print_message "success" "Laravel instalado"
+  print_message "success" "Laravel installed."
 }
 
 setup_npm() {
-  print_message "header" "Configurando NPM"
+  print_message "header" "Configuring NPM"
 
   docker-compose run --rm -u $(id -u):$(id -g) npm install
 
-  print_message "success" "NPM configurado"
+  print_message "success" "NPM configured"
 }
 
 setup_git() {
-  print_message "header" "Configurando Git"
+  print_message "header" "Configuring Git"
 
-  read -p "Deseja inicializar um novo repositório Git? (s/n): " init_git
+  read -p "Do you want to initialize a new Git repository? (y/n): " init_git
 
   if [ "$init_git" = "s" ] || [ "$init_git" = "S" ]; then
-    (cd src && git init && git add . && git commit -m "Projeto inicial com Laradocker")
-    print_message "success" "Repositório Git inicializado"
+    (cd src && git init && git add . && git commit -m "First commit with laradocker")
+    print_message "success" "Git repository initialized"
   else
-    print_message "info" "Pulando inicialização do Git"
+    print_message "info" "Skipping Git initialization"
   fi
 }
 
 finalize_installation() {
-  print_message "header" "Finalizando instalação"
+  print_message "header" "Finalizing installation"
 
-  # Gerar chave de aplicação
   docker-compose run --rm artisan key:generate
 
   echo ""
-  print_message "success" "Instalação finalizada com sucesso!"
+  print_message "success" "Installation successfully completed!"
   echo ""
-  echo "⚡ Para iniciar o servidor Laravel, execute:"
+  echo "⚡ To start the Laravel server, run:"
   echo "   docker-compose up -d"
   echo ""
-  echo "🌐 Acesse a aplicação em: http://localhost"
+  echo "🌐 Access the application at: http://localhost"
   echo ""
-  echo "📚 Comandos úteis:"
-  echo "   ./laradocker.sh artisan [comando]  - Executa comandos Artisan"
-  echo "   ./laradocker.sh composer [comando] - Executa comandos Composer"
-  echo "   ./laradocker.sh npm [comando]      - Executa comandos NPM"
-  echo "   ./laradocker.sh shell              - Acessa o shell do PHP"
-  echo "   ./laradocker.sh start              - Inicia os containers"
-  echo "   ./laradocker.sh stop               - Para os containers"
+  echo "📚 Useful commands:"
+  echo "   ./laradocker.sh artisan [comando]  - Runs Artisan commands"
+  echo "   ./laradocker.sh composer [comando] - Runs Composer commands"
+  echo "   ./laradocker.sh npm [comando]      - Runs NPM commands"
+  echo "   ./laradocker.sh shell              - Accesses the PHP shell"
+  echo "   ./laradocker.sh start              - Starts the containers"
+  echo "   ./laradocker.sh stop               - Stops the containers"
   echo ""
 }
 
 main() {
-  print_message "header" "Laradocker - Instalação"
+  print_message "header" "Laradocker - Installation"
 
   check_dependencies
   setup_directories
