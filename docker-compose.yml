@@ -1,5 +1,3 @@
-version: "3"
-
 networks:
   laravel:
 
@@ -12,29 +10,25 @@ services:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
     ports:
-      - "80:80"
+      - '80:80'
     volumes:
-      - ./src:/var/www/html:delegated
+      - ./src:/var/www/html
     depends_on:
       - php
       - mysql
-      - mailhog
     networks:
       - laravel
 
   mysql:
-    image: mariadb:10.5
+    image: mariadb:10.6
     restart: unless-stopped
-    tty: true
     ports:
-      - "3306:3306"
+      - '3306:3306'
     environment:
-      - MYSQL_DATABASE=laravel
-      - MYSQL_USER=laravel
-      - MYSQL_PASSWORD=secret
-      - MYSQL_ROOT_PASSWORD=secret
-      - SERVICE_TAGS=dev
-      - SERVICE_NAME=mysql
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
     volumes:
       - ./mysql:/var/lib/mysql
     networks:
@@ -47,10 +41,8 @@ services:
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-    ports:
-      - "9000:9000"
     volumes:
-      - ./src:/var/www/html:delegated
+      - ./src:/var/www/html
     networks:
       - laravel
 
@@ -63,22 +55,17 @@ services:
         - GID=${GID:-1000}
     volumes:
       - ./src:/var/www/html
-    depends_on:
-      - php
-    entrypoint: ["composer", "--ignore-platform-reqs"]
+    working_dir: /var/www/html
+    entrypoint: ['composer', '--ignore-platform-reqs']
     networks:
       - laravel
 
   npm:
-    image: node:current-alpine
+    image: node:lts-alpine
     volumes:
       - ./src:/var/www/html
-    ports:
-      - "3000:3000"
-      - "3001:3001"
-      - "5173:5173"
     working_dir: /var/www/html
-    entrypoint: ["npm"]
+    entrypoint: ['npm']
     networks:
       - laravel
 
@@ -90,17 +77,10 @@ services:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
     volumes:
-      - ./src:/var/www/html:delegated
+      - ./src:/var/www/html
     depends_on:
       - mysql
-    entrypoint: ["php", "/var/www/html/artisan"]
-    networks:
-      - laravel
-
-  mailhog:
-    image: mailhog/mailhog:latest
-    ports:
-      - "1025:1025"
-      - "8025:8025"
+    working_dir: /var/www/html
+    entrypoint: ['php', 'artisan']
     networks:
       - laravel
