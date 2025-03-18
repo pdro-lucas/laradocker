@@ -61,7 +61,10 @@ start_containers() {
 install_laravel() {
   print_message "header" "Installing Laravel"
 
-  docker-compose run --rm composer create-project laravel/laravel .
+  docker-compose run --rm -u $(id -u):$(id -g) composer create-project laravel/laravel .
+
+  find ./src -type d -exec chmod 755 {} \;
+  find ./src -type f -exec chmod 644 {} \;
 
   print_message "success" "Laravel installed."
 }
@@ -96,11 +99,12 @@ finalize_installation() {
   print_message "success" "Installation successfully completed!"
   echo ""
   echo "⚡ To start the Laravel server, run:"
-  echo "   docker-compose up -d"
+  echo "   ./laradocker start"
   echo ""
   echo "🌐 Access the application at: http://localhost"
   echo ""
   echo "📚 Useful commands:"
+  echo "   ./laradocker.sh help               - See all available commands"
   echo "   ./laradocker.sh artisan [comando]  - Runs Artisan commands"
   echo "   ./laradocker.sh composer [comando] - Runs Composer commands"
   echo "   ./laradocker.sh npm [comando]      - Runs NPM commands"

@@ -24,7 +24,7 @@ print_message() {
 }
 
 if ! command -v docker-compose &> /dev/null; then
-  print_message "error" "Docker Compose não está instalado. Por favor, instale o Docker Compose primeiro."
+  print_message "error" "Docker Compose is not installed. Please install Docker Compose first."
   exit 1
 fi
 
@@ -52,23 +52,23 @@ case "$1" in
     ;;
 
   "start")
-    print_message "info" "Iniciando containers Docker..."
+    print_message "info" "Starting Docker containers..."
     docker-compose up -d
-    print_message "success" "Containers iniciados!"
-    echo "Acesse a aplicação em: http://localhost"
+    print_message "success" "Containers started!"
+    echo "Access the application at: http://localhost"
     ;;
 
   "stop")
-    print_message "info" "Parando containers Docker..."
+    print_message "info" "Stopping Docker containers..."
     docker-compose down
-    print_message "success" "Containers parados!"
+    print_message "success" "Containers stopped!"
     ;;
 
   "restart")
-    print_message "info" "Reiniciando containers Docker..."
+    print_message "info" "Restarting Docker containers..."
     docker-compose down && docker-compose up -d
-    print_message "success" "Containers reiniciados!"
-    echo "Acesse a aplicação em: http://localhost"
+    print_message "success" "Containers restarted!"
+    echo "Access the application at: http://localhost"
     ;;
 
   "migrate")
@@ -77,26 +77,26 @@ case "$1" in
 
   "help")
     echo ""
-    echo "Laradocker - Ambiente de desenvolvimento Laravel com Docker"
+    echo "Laradocker - Laravel development environment with Docker"
     echo ""
-    echo "Uso: ./laradocker.sh [comando] [opções]"
+    echo "Usage: ./laradocker.sh [command] [options]"
     echo ""
-    echo "Comandos disponíveis:"
-    echo "  artisan [comando]   - Executa comandos Artisan"
-    echo "  composer [comando]  - Executa comandos Composer"
-    echo "  npm [comando]       - Executa comandos NPM"
-    echo "  shell               - Acessa o shell do PHP"
-    echo "  start               - Inicia os containers"
-    echo "  stop                - Para os containers"
-    echo "  restart             - Reinicia os containers"
-    echo "  migrate             - Executa as migrações"
-    echo "  help                - Exibe esta ajuda"
+    echo "Available commands:"
+    echo "  artisan [command]   - Run Artisan commands"
+    echo "  composer [command]  - Run Composer commands"
+    echo "  npm [command]       - Run NPM commands"
+    echo "  shell               - Access PHP shell"
+    echo "  start               - Start containers"
+    echo "  stop                - Stop containers"
+    echo "  restart             - Restart containers"
+    echo "  migrate             - Run migrations"
+    echo "  help                - Display this help"
     echo ""
     ;;
 
   *)
-    echo "Comando desconhecido: $1"
-    echo "Use './laradocker.sh help' para ver a lista de comandos disponíveis"
+    echo "Unknown command: $1"
+    echo "Use './laradocker.sh help' to see the list of available commands"
     exit 1
     ;;
 esac
